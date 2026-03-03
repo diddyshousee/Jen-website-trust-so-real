@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center | LittleMan</title>
+    <style>
+        :root {
+            --navy: #001f3f;
+            --white: #ffffff;
+            --light-gray: #f4f7f6;
+            --accent: #0074D9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--navy);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--navy);
+            color: var(--white);
+            padding: 1rem 2rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--navy);
+        }
+
+        h2 { border-bottom: 2px solid var(--light-gray); padding-bottom: 10px; }
+
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--navy);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .item-list {
+            list-style: none;
+            padding: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .item {
+            background: var(--light-gray);
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid var(--accent);
+            position: relative;
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            color: #666;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            color: var(--navy);
+        }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Personal Work Dashboard</h1>
+    <div id="clock"></div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>Work Tasks</h2>
+        <input type="text" id="taskInput" placeholder="What needs to be done?">
+        <button onclick="addItem('task')">Add Task</button>
+        <ul id="taskList" class="item-list"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Quick Notes</h2>
+        <textarea id="noteInput" rows="3" placeholder="Write down a thought..."></textarea>
+        <button onclick="addItem('note')">Save Note</button>
+        <ul id="noteList" class="item-list"></ul>
+    </div>
+</div>
+
+<footer>
+    Made by LittleMan
+</footer>
+
+<script>
+    // Real-time Clock
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Logic to Add Items
+    function addItem(type) {
+        const input = type === 'task' ? document.getElementById('taskInput') : document.getElementById('noteInput');
+        const list = type === 'task' ? document.getElementById('taskList') : document.getElementById('noteList');
+        
+        if (input.value.trim() === "") return;
+
+        const timestamp = new Date().toLocaleString();
+        const li = document.createElement('li');
+        li.className = 'item';
+        li.innerHTML = `
+            <strong>${input.value}</strong>
+            <span class="timestamp">${timestamp}</span>
+            <button style="background:none; color:red; padding:0; margin-top:5px; font-size:12px;" onclick="this.parentElement.remove()">Delete</button>
+        `;
+
+        list.prepend(li);
+        input.value = "";
+    }
+</script>
+
+</body>
+</html>
