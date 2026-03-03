@@ -10,10 +10,11 @@
             --white: #ffffff;
             --light-gray: #f4f7f6;
             --accent: #0074D9;
+            --danger: #FF4136;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--light-gray);
             color: var(--navy);
             margin: 0;
@@ -25,102 +26,127 @@
         header {
             background-color: var(--navy);
             color: var(--white);
-            padding: 1rem 2rem;
+            padding: 1.5rem;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
+
+        #clock { font-size: 1.1rem; opacity: 0.8; margin-top: 5px; }
 
         .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 20px;
+            gap: 25px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
             flex: 1;
         }
 
         .card {
             background: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-top: 5px solid var(--navy);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 6px solid var(--navy);
         }
 
-        h2 { border-bottom: 2px solid var(--light-gray); padding-bottom: 10px; }
+        h2 { margin-top: 0; font-size: 1.5rem; color: var(--navy); border-bottom: 2px solid var(--light-gray); padding-bottom: 10px; }
 
         textarea, input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid #eee;
+            border-radius: 6px;
             box-sizing: border-box;
+            font-size: 1rem;
+            outline-color: var(--accent);
         }
 
-        button {
+        button.main-btn {
             background-color: var(--navy);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 12px 20px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            width: 100%;
+            font-weight: bold;
+            transition: transform 0.1s;
         }
 
-        button:hover { opacity: 0.9; }
+        button.main-btn:active { transform: scale(0.98); }
 
         .item-list {
             list-style: none;
             padding: 0;
-            max-height: 400px;
-            overflow-y: auto;
+            margin-top: 20px;
         }
 
         .item {
-            background: var(--light-gray);
-            margin: 10px 0;
-            padding: 10px;
-            border-left: 4px solid var(--accent);
+            background: #fafafa;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-left: 5px solid var(--accent);
+            border-radius: 4px;
             position: relative;
+            animation: fadeIn 0.3s ease;
         }
 
-        .timestamp {
-            font-size: 0.75rem;
-            color: #666;
-            display: block;
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .item-text { display: block; margin-bottom: 8px; font-weight: 500; word-wrap: break-word; }
+
+        .timestamp { font-size: 0.75rem; color: #888; }
+
+        .del-btn {
+            background: none;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            float: right;
         }
+
+        .del-btn:hover { background: var(--danger); color: white; }
 
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             font-weight: bold;
-            color: var(--navy);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            opacity: 0.7;
         }
 
-        @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Personal Work Dashboard</h1>
-    <div id="clock"></div>
+    <div id="clock">Loading time...</div>
 </header>
 
 <div class="container">
     <div class="card">
         <h2>Work Tasks</h2>
-        <input type="text" id="taskInput" placeholder="What needs to be done?">
-        <button onclick="addItem('task')">Add Task</button>
+        <input type="text" id="taskInput" placeholder="Add a new task...">
+        <button class="main-btn" onclick="addItem('task')">Add Task</button>
         <ul id="taskList" class="item-list"></ul>
     </div>
 
     <div class="card">
         <h2>Quick Notes</h2>
-        <textarea id="noteInput" rows="3" placeholder="Write down a thought..."></textarea>
-        <button onclick="addItem('note')">Save Note</button>
+        <textarea id="noteInput" rows="3" placeholder="Type a note..."></textarea>
+        <button class="main-btn" onclick="addItem('note')">Save Note</button>
         <ul id="noteList" class="item-list"></ul>
     </div>
 </div>
@@ -130,32 +156,75 @@
 </footer>
 
 <script>
-    // Real-time Clock
+    // Clock Function
     function updateClock() {
         const now = new Date();
-        document.getElementById('clock').innerText = now.toLocaleString();
+        document.getElementById('clock').innerText = now.toLocaleString('en-US', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', 
+            hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        });
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Logic to Add Items
+    // Load data on startup
+    window.onload = () => {
+        loadData('taskList');
+        loadData('noteList');
+    };
+
     function addItem(type) {
-        const input = type === 'task' ? document.getElementById('taskInput') : document.getElementById('noteInput');
-        const list = type === 'task' ? document.getElementById('taskList') : document.getElementById('noteList');
+        const input = document.getElementById(type === 'task' ? 'taskInput' : 'noteInput');
+        const listId = type === 'task' ? 'taskList' : 'noteList';
+        const list = document.getElementById(listId);
         
         if (input.value.trim() === "") return;
 
-        const timestamp = new Date().toLocaleString();
+        const time = new Date().toLocaleString();
+        createListElement(list, input.value, time);
+        
+        input.value = "";
+        saveData(listId);
+    }
+
+    function createListElement(parent, text, time) {
         const li = document.createElement('li');
         li.className = 'item';
         li.innerHTML = `
-            <strong>${input.value}</strong>
-            <span class="timestamp">${timestamp}</span>
-            <button style="background:none; color:red; padding:0; margin-top:5px; font-size:12px;" onclick="this.parentElement.remove()">Delete</button>
+            <button class="del-btn" onclick="removeMe(this, '${parent.id}')">Delete</button>
+            <span class="item-text">${text}</span>
+            <span class="timestamp">${time}</span>
         `;
+        parent.prepend(li);
+    }
 
-        list.prepend(li);
-        input.value = "";
+    function removeMe(btn, listId) {
+        btn.parentElement.remove();
+        saveData(listId);
+    }
+
+    // LOCAL STORAGE LOGIC
+    function saveData(listId) {
+        const list = document.getElementById(listId);
+        const items = [];
+        list.querySelectorAll('.item').forEach(li => {
+            items.push({
+                text: li.querySelector('.item-text').innerText,
+                time: li.querySelector('.timestamp').innerText
+            });
+        });
+        localStorage.setItem(listId, JSON.stringify(items));
+    }
+
+    function loadData(listId) {
+        const saved = localStorage.getItem(listId);
+        if (!saved) return;
+        const items = JSON.parse(saved);
+        const list = document.getElementById(listId);
+        // Load in reverse because we 'prepend' new items
+        items.reverse().forEach(item => {
+            createListElement(list, item.text, item.time);
+        });
     }
 </script>
 
