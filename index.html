@@ -157,7 +157,7 @@
     <div class="bookmarklet-info">
         <h2>The Bookmarklet</h2>
         <p>Drag the button below to your bookmarks bar to open your notes on any website.</p>
-        <a href="javascript:(function(){var d=document;var s=d.createElement('script');s.src='https://diddyshousee.github.io/Jen-website-trust-so-real/bookmarklet.js?v='+new Date().getTime();d.body.appendChild(s);})();" class="bookmarklet-button">Drag to Bookmarks</a>
+        <a href="javascript:(function(){if(document.getElementById('notes-bookmarklet-container')){return}const e='@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap");#notes-bookmarklet-container{position:fixed;top:40px;right:40px;width:380px;height:550px;z-index:2147483647;background-color:rgba(26,26,26,.65);-webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);border:1px solid rgba(255,255,255,.1);border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;transform:scale(.95) translate(20px,-20px);opacity:0;transition:transform .3s cubic-bezier(.25,1,.5,1),opacity .3s ease}#notes-bookmarklet-container.active{transform:scale(1) translate(0,0);opacity:1}#notes-bookmarklet-header{padding:10px 15px;background-color:rgba(44,44,44,.7);color:#eaeaea;font-family:"Poppins",sans-serif;font-size:.9rem;font-weight:500;cursor:move;user-select:none}#notes-bookmarklet-close{position:absolute;top:8px;right:8px;width:30px;height:30px;background:transparent;color:#aaa;border:none;border-radius:50%;font-size:1.5rem;cursor:pointer;line-height:30px;text-align:center;transition:color .2s,background-color .2s}#notes-bookmarklet-close:hover{color:#fff;background-color:rgba(255,107,107,.8)}#notes-bookmarklet-iframe{flex-grow:1;border:none;background-color:transparent}',t=document.createElement("div");t.id="notes-bookmarklet-container";const o=document.createElement("div");o.id="notes-bookmarklet-header",o.textContent="Quick Notes";const n=document.createElement("button");n.id="notes-bookmarklet-close",n.innerHTML="&times;";const c=document.createElement("iframe");c.id="notes-bookmarklet-iframe",c.src="https://diddyshousee.github.io/Jen-website-trust-so-real/";const i=document.createElement("style");i.type="text/css",i.innerText=e,o.appendChild(n),t.appendChild(o),t.appendChild(c),document.head.appendChild(i),document.body.appendChild(t),setTimeout(()=>t.classList.add("active"),50),n.onclick=function(){t.classList.remove("active"),setTimeout(()=>{document.body.removeChild(t),document.head.removeChild(i)},300)};let d=!1,s,a,l,r;o.onmousedown=function(e){d=!0,s=e.clientX,a=e.clientY,l=t.offsetLeft,r=t.offsetTop,o.style.cursor="grabbing",t.style.transition="none"},document.onmousemove=function(e){if(!d)return;let o=l+e.clientX-s,n=r+e.clientY-a;t.style.left=o+"px",t.style.top=n+"px"},document.onmouseup=function(){d&&(d=!1,o.style.cursor="move",t.style.transition="transform .3s cubic-bezier(.25,1,.5,1), opacity .3s ease")}})();" class="bookmarklet-button">Drag to Bookmarks</a>
         <p class="bookmarklet-fallback">Or, right-click the button, copy link address, and create a new bookmark.</p>
     </div>
 </div>
@@ -207,7 +207,7 @@
         const items = JSON.parse(saved);
         const list = document.getElementById(listId);
         // Load in original order as we prepend every time
-        items.forEach(item => createListElement(list, item.text, item.time));
+        items.reverse().forEach(item => createListElement(list, item.text, item.time));
     }
 </script>
 
